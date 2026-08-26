@@ -23,12 +23,16 @@ pharmacy-system/
 │   └── src/
 │       ├── PharmacySystem.Domain/          # Entities, Enums, Value Objects
 │       │   └── Entities/                   # Medicine, Batch, Pharmacy, PharmacyBranch
-│       ├── PharmacySystem.Application/     # CQRS Handlers, DTOs, Validators
+│       ├── PharmacySystem.Application/     # CQRS Handlers, DTOs, Abstractions
+│       │   ├── Common/                     # IApplicationDbContext, Exceptions
 │       │   └── Features/Medicines/
 │       ├── PharmacySystem.Infrastructure/  # EF Core 10, AppDbContext
-│       │   └── Data/
+│       │   ├── Data/
+│       │   └── Migrations/                 # InitialCreate
 │       └── PharmacySystem.API/             # Controllers, Program.cs, Config
-│           └── Controllers/
+│           ├── Controllers/
+│           ├── Middleware/                 # ExceptionHandlingMiddleware
+│           └── Properties/                 # launchSettings.json
 ├── frontend/
 │   ├── package.json
 │   ├── angular.json
@@ -53,13 +57,25 @@ pharmacy-system/
 
 ### 1. قاعدة البيانات
 
-حدّث `ConnectionStrings:DefaultConnection` في `backend/src/PharmacySystem.API/appsettings.json` بما يناسب جهازك، ثم:
+حدّث `ConnectionStrings:DefaultConnection` في `backend/src/PharmacySystem.API/appsettings.json` بما يناسب جهازك. أمثلة:
+
+```jsonc
+// LocalDB (Visual Studio)
+"Server=(localdb)\\MSSQLLocalDB;Database=PharmacySystem;Trusted_Connection=True;TrustServerCertificate=True;"
+
+// SQL Server Express
+"Server=localhost\\SQLEXPRESS;Database=PharmacySystem;Trusted_Connection=True;TrustServerCertificate=True;"
+```
+
+الـ migration الأولى (`InitialCreate`) **موجودة في الريبو**، فتحتاج فقط تطبيقها:
 
 ```bash
-cd backend/src/PharmacySystem.API
+cd backend
 dotnet restore
-dotnet ef migrations add InitialCreate
-dotnet ef database update
+dotnet tool install --global dotnet-ef      # مرة واحدة فقط
+
+cd src/PharmacySystem.API
+dotnet ef database update --project ../PharmacySystem.Infrastructure --startup-project .
 ```
 
 ### 2. الباك إند
@@ -69,7 +85,11 @@ cd backend/src/PharmacySystem.API
 dotnet run
 ```
 
-الـ API على: `https://localhost:7001` — Swagger على: `https://localhost:7001/swagger`
+| العنوان | الرابط |
+|---|---|
+| HTTP | `http://localhost:5001` |
+| HTTPS | `https://localhost:7001` |
+| Swagger | `https://localhost:7001/swagger` |
 
 ### 3. الفرونت إند
 
@@ -107,6 +127,15 @@ ng serve
 - [Node.js 22+](https://nodejs.org)
 - SQL Server 2019+ أو SQL Server Express / LocalDB
 - Angular CLI 21: `npm i -g @angular/cli`
+
+## 🏗️ ملاحظات معمارية
+
+- اتجاه الاعتمادات أحادي: `API → Infrastructure → Application → Domain`. طبقة Application لا تعرف Infrastructure إطلاقاً، بل تتعامل مع `IApplicationDbContext` الذي ينفّذه `AppDbContext`.
+- الأخطاء تُترجم إلى **ProblemDetails (RFC 7807)** عبر `ExceptionHandlingMiddleware`:
+  - `NotFoundException` → **404**
+  - `ConflictException` → **409** (مثلاً باركود مكرر)
+  - أي خطأ آخر → **500** بدون كشف تفاصيل داخلية
+- أعمدة الأموال معرّفة `decimal(18,3)` لأن الدينار الأردني يستخدم **3 خانات عشرية** (فلس).
 
 ## 📄 الترخيص
 

@@ -1,16 +1,17 @@
 using Microsoft.EntityFrameworkCore;
+using PharmacySystem.Application.Common;
 using PharmacySystem.Domain.Entities;
 
 namespace PharmacySystem.Infrastructure.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : DbContext, IApplicationDbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public DbSet<Medicine> Medicines { get; set; }
-    public DbSet<Batch> Batches { get; set; }
-    public DbSet<Pharmacy> Pharmacies { get; set; }
-    public DbSet<PharmacyBranch> PharmacyBranches { get; set; }
+    public DbSet<Medicine> Medicines => Set<Medicine>();
+    public DbSet<Batch> Batches => Set<Batch>();
+    public DbSet<Pharmacy> Pharmacies => Set<Pharmacy>();
+    public DbSet<PharmacyBranch> PharmacyBranches => Set<PharmacyBranch>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,6 +31,9 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.BatchNo).IsRequired().HasMaxLength(50);
+            // Jordanian Dinar uses 3 decimal places (fils)
+            entity.Property(e => e.PurchasePrice).HasPrecision(18, 3);
+            entity.Property(e => e.SellingPrice).HasPrecision(18, 3);
             entity.HasOne(e => e.Medicine)
                   .WithMany(m => m.Batches)
                   .HasForeignKey(e => e.MedicineId);
