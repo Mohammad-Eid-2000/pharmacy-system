@@ -1,3 +1,5 @@
+using MediatR;
+
 namespace PharmacySystem.Application.Features.Medicines;
 
 public record MedicineDto(

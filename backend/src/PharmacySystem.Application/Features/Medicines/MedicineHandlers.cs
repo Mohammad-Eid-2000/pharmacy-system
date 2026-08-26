@@ -1,21 +1,26 @@
 using MediatR;
 using PharmacySystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using PharmacySystem.Infrastructure.Data;
+using PharmacySystem.Application.Common;
 
 namespace PharmacySystem.Application.Features.Medicines;
 
 public class CreateMedicineHandler : IRequestHandler<CreateMedicineCommand, int>
 {
-    private readonly AppDbContext _context;
+    private readonly IApplicationDbContext _context;
 
-    public CreateMedicineHandler(AppDbContext context)
+    public CreateMedicineHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
     public async Task<int> Handle(CreateMedicineCommand request, CancellationToken cancellationToken)
     {
+        var barcodeTaken = await _context.Medicines
+            .AnyAsync(m => m.Barcode == request.Barcode, cancellationToken);
+        if (barcodeTaken)
+            throw new ConflictException($"A medicine with barcode '{request.Barcode}' already exists.");
+
         var medicine = new Medicine
         {
             NameAr = request.NameAr,
@@ -39,17 +44,24 @@ public class CreateMedicineHandler : IRequestHandler<CreateMedicineCommand, int>
 
 public class UpdateMedicineHandler : IRequestHandler<UpdateMedicineCommand, Unit>
 {
-    private readonly AppDbContext _context;
+    private readonly IApplicationDbContext _context;
 
-    public UpdateMedicineHandler(AppDbContext context)
+    public UpdateMedicineHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
     public async Task<Unit> Handle(UpdateMedicineCommand request, CancellationToken cancellationToken)
     {
-        var medicine = await _context.Medicines.FindAsync(new object[] { request.Id }, cancellationToken);
-        if (medicine == null) throw new InvalidOperationException($"Medicine with ID {request.Id} not found");
+        var medicine = await _context.Medicines
+            .FirstOrDefaultAsync(m => m.Id == request.Id, cancellationToken);
+        if (medicine is null)
+            throw new NotFoundException(nameof(Medicine), request.Id);
+
+        var barcodeTaken = await _context.Medicines
+            .AnyAsync(m => m.Barcode == request.Barcode && m.Id != request.Id, cancellationToken);
+        if (barcodeTaken)
+            throw new ConflictException($"A medicine with barcode '{request.Barcode}' already exists.");
 
         medicine.NameAr = request.NameAr;
         medicine.NameEn = request.NameEn;
@@ -71,9 +83,9 @@ public class UpdateMedicineHandler : IRequestHandler<UpdateMedicineCommand, Unit
 
 public class GetMedicinesHandler : IRequestHandler<GetMedicinesQuery, PagedResult<MedicineDto>>
 {
-    private readonly AppDbContext _context;
+    private readonly IApplicationDbContext _context;
 
-    public GetMedicinesHandler(AppDbContext context)
+    public GetMedicinesHandler(IApplicationDbContext context)
     {
         _context = context;
     }
@@ -84,9 +96,10 @@ public class GetMedicinesHandler : IRequestHandler<GetMedicinesQuery, PagedResul
 
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {
-            query = query.Where(m => m.NameAr.Contains(request.SearchTerm) || 
-                                     m.NameEn.Contains(request.SearchTerm) || 
-                                     m.Barcode.Contains(request.SearchTerm));
+            var term = request.SearchTerm.Trim();
+            query = query.Where(m => m.NameAr.Contains(term) ||
+                                     m.NameEn.Contains(term) ||
+                                     m.Barcode.Contains(term));
         }
 
         if (request.IsActive.HasValue)
