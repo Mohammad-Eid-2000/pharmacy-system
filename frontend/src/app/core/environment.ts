@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:5000/api'
+  /** Must match the backend launch profile (backend/src/PharmacySystem.API/Properties/launchSettings.json). */
+  apiUrl: 'http://localhost:5001/api',
 };

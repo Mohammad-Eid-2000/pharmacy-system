@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
-import { MedicinesListComponent } from './medicines-list.component';
 
 export const MEDICINES_ROUTES: Routes = [
-  { path: '', component: MedicinesListComponent }
+  {
+    path: '',
+    loadComponent: () => import('./medicines-list.component').then(m => m.MedicinesListComponent),
+  },
 ];

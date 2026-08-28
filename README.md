@@ -93,19 +93,58 @@ dotnet run
 
 ### 3. الفرونت إند
 
+يتطلب **Node.js 22.12+** (Angular 21 لا يعمل على Node 20).
+
 ```bash
 cd frontend
 npm install
-ng serve
+npm start
 ```
 
 التطبيق على: `http://localhost:4200`
+
+عنوان الـ API مُعرَّف في `src/app/core/environment.ts` ويجب أن يطابق منفذ الباك إند (`5001` افتراضياً).
+
+## 🌐 دعم اللغتين (العربية / English)
+
+الواجهة **ثنائية اللغة بالكامل** مع تبديل فوري من زر اللغة في الشريط العلوي — بدون إعادة تحميل الصفحة وبدون build منفصل لكل لغة.
+
+| الجانب | التفاصيل |
+|---|---|
+| المحرك | خدمة `I18nService` مبنية على Signals |
+| القواميس | `src/app/core/i18n/translations.ts` |
+| الاتجاه | تبديل تلقائي بين **RTL** للعربية و **LTR** للإنجليزية عبر `<html dir>` |
+| الحفظ | يُحفظ اختيار اللغة في `localStorage` ويبقى بعد إعادة التحميل |
+| أسماء الأدوية | تُعرض حسب اللغة النشطة (`nameAr` / `nameEn`) |
+
+**أمان الترجمة:** القاموس العربي هو المصدر الذي يُشتق منه النوع `TranslationKey`، والقاموس الإنجليزي مُقيَّد بـ `Record<TranslationKey, string>` — أي مفتاح ناقص أو خطأ إملائي **يُفشل الـ build** بدل أن يظهر نص مفقود للمستخدم.
+
+كل التنسيقات تستخدم **CSS Logical Properties** (`text-align: start`، `border-inline-end`، `margin-inline-start`) بدل `left/right`، لذلك ينعكس التصميم بشكل صحيح في الاتجاهين.
+
+### إضافة مفتاح ترجمة جديد
+
+```ts
+// src/app/core/i18n/translations.ts
+export const ar = {
+  'pos.title': 'نقطة البيع',   // أضف هنا
+} as const;
+
+export const en: Record<TranslationKey, string> = {
+  'pos.title': 'Point of Sale', // ثم هنا — وإلا يفشل الـ build
+};
+```
+
+```html
+<!-- في القالب -->
+<h1>{{ i18n.t('pos.title') }}</h1>
+```
 
 ## ✅ الموديولات
 
 | الموديول | الحالة |
 |---|---|
 | الأدوية (Medicines) | ✅ CRUD كامل — Backend + Frontend |
+| تعريب الواجهة (i18n) | ✅ عربي/إنجليزي + RTL/LTR |
 | المخزون (Inventory) | 🔄 قيد التطوير — Routes جاهزة |
 | نقطة البيع (POS) | ⏳ مخطّط |
 | المشتريات والموردين | ⏳ مخطّط |

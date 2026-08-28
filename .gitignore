@@ -29,3 +29,6 @@ Thumbs.db
 # Environment
 .env
 appsettings.Development.json
+
+# Angular build cache
+.angular/
