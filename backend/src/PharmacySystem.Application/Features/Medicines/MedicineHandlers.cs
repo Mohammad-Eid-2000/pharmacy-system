@@ -33,6 +33,7 @@ public class CreateMedicineHandler : IRequestHandler<CreateMedicineCommand, int>
             TaxRate = request.TaxRate,
             IsControlled = request.IsControlled,
             ControlledLevel = request.ControlledLevel,
+            ReorderLevel = request.ReorderLevel,
             IsActive = true
         };
 
@@ -74,6 +75,7 @@ public class UpdateMedicineHandler : IRequestHandler<UpdateMedicineCommand, Unit
         medicine.IsControlled = request.IsControlled;
         medicine.ControlledLevel = request.ControlledLevel;
         medicine.IsActive = request.IsActive;
+        medicine.ReorderLevel = request.ReorderLevel;
         medicine.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync(cancellationToken);
@@ -115,7 +117,7 @@ public class GetMedicinesHandler : IRequestHandler<GetMedicinesQuery, PagedResul
             .Select(m => new MedicineDto(
                 m.Id, m.NameAr, m.NameEn, m.Barcode, m.JFDARegistrationNo,
                 m.Form, m.Strength, m.Manufacturer, m.TaxRate,
-                m.IsControlled, m.ControlledLevel, m.IsActive, m.CreatedAt
+                m.IsControlled, m.ControlledLevel, m.IsActive, m.ReorderLevel, m.CreatedAt
             ))
             .ToListAsync(cancellationToken);
 

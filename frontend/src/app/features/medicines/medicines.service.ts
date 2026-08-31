@@ -16,6 +16,7 @@ export interface Medicine {
   isControlled: boolean;
   controlledLevel: number;
   isActive: boolean;
+  reorderLevel: number;
   createdAt: string;
 }
 

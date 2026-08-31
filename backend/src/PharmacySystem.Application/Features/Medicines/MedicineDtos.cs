@@ -15,6 +15,7 @@ public record MedicineDto(
     bool IsControlled,
     int ControlledLevel,
     bool IsActive,
+    int ReorderLevel,
     DateTime CreatedAt
 );
 
@@ -28,7 +29,8 @@ public record CreateMedicineCommand(
     string? Manufacturer,
     int TaxRate = 16,
     bool IsControlled = false,
-    int ControlledLevel = 0
+    int ControlledLevel = 0,
+    int ReorderLevel = 10
 ) : IRequest<int>;
 
 public record UpdateMedicineCommand(
@@ -43,7 +45,8 @@ public record UpdateMedicineCommand(
     int TaxRate,
     bool IsControlled,
     int ControlledLevel,
-    bool IsActive
+    bool IsActive,
+    int ReorderLevel
 ) : IRequest<Unit>;
 
 public record GetMedicinesQuery(

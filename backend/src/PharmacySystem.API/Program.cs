@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using PharmacySystem.API.Middleware;
 using PharmacySystem.Application.Common;
@@ -6,7 +7,11 @@ using PharmacySystem.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    // Serialize enums as names ("Expired") rather than ordinals (0), so the
+    // API contract stays self-describing for the Angular client.
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddProblemDetails();

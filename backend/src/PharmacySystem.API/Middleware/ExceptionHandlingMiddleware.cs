@@ -29,6 +29,7 @@ public class ExceptionHandlingMiddleware
         {
             var (status, title) = ex switch
             {
+                ValidationException => (HttpStatusCode.BadRequest, "Invalid request"),
                 NotFoundException => (HttpStatusCode.NotFound, "Resource not found"),
                 ConflictException => (HttpStatusCode.Conflict, "Conflict"),
                 _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")

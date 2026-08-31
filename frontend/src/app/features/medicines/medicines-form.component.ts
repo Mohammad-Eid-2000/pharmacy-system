@@ -31,6 +31,7 @@ interface MedicineForm {
   isControlled: boolean;
   controlledLevel: number;
   isActive: boolean;
+  reorderLevel: number;
 }
 
 function emptyForm(): MedicineForm {
@@ -47,6 +48,8 @@ function emptyForm(): MedicineForm {
     isControlled: false,
     controlledLevel: 0,
     isActive: true,
+    // Default low-stock threshold; matches the domain default on the API.
+    reorderLevel: 10,
   };
 }
 
@@ -64,6 +67,7 @@ function toForm(medicine: Medicine | null): MedicineForm {
     isControlled: medicine.isControlled,
     controlledLevel: medicine.controlledLevel,
     isActive: medicine.isActive,
+    reorderLevel: medicine.reorderLevel,
   };
 }
 
@@ -146,6 +150,19 @@ function toForm(medicine: Medicine | null): MedicineForm {
               />
             </div>
             <div class="form-group">
+              <label class="form-label" for="reorderLevel">{{ i18n.t('medicine.reorderLevel') }}</label>
+              <input
+                id="reorderLevel"
+                type="number"
+                class="form-input"
+                name="reorderLevel"
+                [(ngModel)]="form().reorderLevel"
+                min="0"
+                step="1"
+              />
+              <span class="form-hint">{{ i18n.t('medicine.reorderLevelHint') }}</span>
+            </div>
+            <div class="form-group">
               <label class="form-label checkbox-label">
                 <input type="checkbox" name="isControlled" [(ngModel)]="form().isControlled" />
                 {{ i18n.t('medicine.controlled') }}
@@ -212,6 +229,12 @@ function toForm(medicine: Medicine | null): MedicineForm {
         gap: var(--space-4);
         padding: var(--space-6);
         border-bottom: 1px solid var(--color-border);
+      }
+      .form-hint {
+        display: block;
+        font-size: 0.8125rem;
+        color: var(--color-text-muted);
+        margin-top: var(--space-1);
       }
       .modal-header h2 {
         font-size: 1.25rem;

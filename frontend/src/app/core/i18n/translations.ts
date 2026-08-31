@@ -71,6 +71,8 @@ export const ar = {
   'medicine.active': 'نشط',
   'medicine.inactive': 'غير نشط',
   'medicine.actions': 'إجراءات',
+  'medicine.reorderLevel': 'حد إعادة الطلب',
+  'medicine.reorderLevelHint': 'ينبّهك النظام عند وصول المخزون لهذا الحد',
 
   // Medicine form
   'medicineForm.addTitle': 'إضافة دواء جديد',
@@ -90,6 +92,111 @@ export const ar = {
 
   // Inventory page
   'inventory.title': 'إدارة المخزون',
+
+  // Inventory — tabs & headings
+  'inventory.stockTab': 'المخزون حسب الدواء',
+  'inventory.batchesTab': 'الدفعات',
+  'inventory.movementsTab': 'سجل الحركات',
+  'inventory.receiveStock': 'استلام دفعة',
+  'inventory.searchPlaceholder': 'بحث بالاسم أو الباركود...',
+  'inventory.loadFailed': 'فشل تحميل بيانات المخزون',
+  'inventory.emptyStock': 'لا توجد أدوية في المخزون',
+  'inventory.emptyBatches': 'لا توجد دفعات',
+  'inventory.emptyMovements': 'لا توجد حركات مخزون',
+
+  // Inventory — summary cards
+  'inventory.summaryUnits': 'إجمالي الوحدات',
+  'inventory.summaryValue': 'قيمة المخزون',
+  'inventory.summaryBatches': 'الدفعات النشطة',
+  'inventory.summaryLow': 'مخزون منخفض',
+  'inventory.summaryOut': 'نفذ من المخزون',
+  'inventory.summaryExpiring': 'قارب على الانتهاء',
+  'inventory.summaryExpired': 'منتهي الصلاحية',
+  'inventory.summaryMedicines': 'الأدوية النشطة',
+
+  // Inventory — stock table
+  'inventory.quantity': 'الكمية',
+  'inventory.reorderLevel': 'حد إعادة الطلب',
+  'inventory.batchCount': 'عدد الدفعات',
+  'inventory.nearestExpiry': 'أقرب انتهاء صلاحية',
+  'inventory.stockValue': 'القيمة',
+  'inventory.viewBatches': 'عرض الدفعات',
+
+  // Inventory — stock status
+  'stockStatus.OutOfStock': 'نفذ',
+  'stockStatus.Low': 'منخفض',
+  'stockStatus.Ok': 'متوفر',
+  'stockStatus.all': 'كل الحالات',
+
+  // Inventory — batch table
+  'batch.batchNo': 'رقم الدفعة',
+  'batch.medicine': 'الدواء',
+  'batch.expiryDate': 'تاريخ الانتهاء',
+  'batch.quantity': 'الكمية',
+  'batch.initialQuantity': 'الكمية الأصلية',
+  'batch.purchasePrice': 'سعر الشراء',
+  'batch.sellingPrice': 'سعر البيع',
+  'batch.supplier': 'المورّد',
+  'batch.receivedDate': 'تاريخ الاستلام',
+  'batch.daysLeft': 'الأيام المتبقية',
+  'batch.adjust': 'تعديل الكمية',
+  'batch.showDepleted': 'إظهار الدفعات المنتهية',
+  'batch.clearFilter': 'إلغاء التصفية',
+  'batch.filteredBy': 'الدفعات لـ: {name}',
+
+  // Inventory — expiry status
+  'expiryStatus.Expired': 'منتهي',
+  'expiryStatus.ExpiringSoon': 'قارب على الانتهاء',
+  'expiryStatus.Valid': 'صالح',
+  'expiryStatus.all': 'كل الصلاحيات',
+  'expiry.daysAgo': 'منذ {n} يوم',
+  'expiry.inDays': 'بعد {n} يوم',
+
+  // Inventory — movements table
+  'movement.date': 'التاريخ',
+  'movement.type': 'نوع الحركة',
+  'movement.change': 'التغيير',
+  'movement.before': 'قبل',
+  'movement.after': 'بعد',
+  'movement.reason': 'السبب',
+  'movement.reference': 'المرجع',
+
+  // Movement types
+  'movementType.Receipt': 'استلام',
+  'movementType.Dispense': 'صرف',
+  'movementType.Adjustment': 'تسوية جرد',
+  'movementType.Disposal': 'إتلاف',
+  'movementType.ReturnToSupplier': 'إرجاع للمورّد',
+  'movementType.CustomerReturn': 'إرجاع من العميل',
+
+  // Receive stock form
+  'receive.title': 'استلام دفعة جديدة',
+  'receive.medicine': 'الدواء',
+  'receive.medicinePlaceholder': 'اختر الدواء',
+  'receive.submit': 'تسجيل الاستلام',
+  'receive.duplicateBatch': 'رقم الدفعة مستخدم لهذا الدواء',
+  'receive.invalid': 'تحقق من البيانات المدخلة',
+  'receive.failed': 'فشل تسجيل الاستلام',
+  'receive.expiryHint': 'يجب أن يكون تاريخ الانتهاء في المستقبل',
+
+  // Adjust stock form
+  'adjust.title': 'تعديل كمية الدفعة',
+  'adjust.currentQuantity': 'الكمية الحالية',
+  'adjust.newQuantity': 'الكمية الجديدة',
+  'adjust.movementType': 'نوع الحركة',
+  'adjust.reason': 'السبب',
+  'adjust.reasonPlaceholder': 'مثال: تسوية جرد فعلي',
+  'adjust.reference': 'المرجع (اختياري)',
+  'adjust.submit': 'حفظ التعديل',
+  'adjust.maxHint': 'الحد الأقصى {n} وحدة',
+  'adjust.invalid': 'تحقق من البيانات المدخلة',
+  'adjust.failed': 'فشل تعديل الكمية',
+  'adjust.delta': 'الفرق',
+
+  // Units
+  'unit.jod': 'د.أ',
+  'unit.units': 'وحدة',
+  'unit.day': 'يوم',
 } as const;
 
 export type TranslationKey = keyof typeof ar;
@@ -159,6 +266,8 @@ export const en: Record<TranslationKey, string> = {
   'medicine.active': 'Active',
   'medicine.inactive': 'Inactive',
   'medicine.actions': 'Actions',
+  'medicine.reorderLevel': 'Reorder Level',
+  'medicine.reorderLevelHint': 'You are alerted when stock reaches this level',
 
   // Medicine form
   'medicineForm.addTitle': 'Add New Medicine',
@@ -178,6 +287,111 @@ export const en: Record<TranslationKey, string> = {
 
   // Inventory page
   'inventory.title': 'Inventory Management',
+
+  // Inventory — tabs & headings
+  'inventory.stockTab': 'Stock by Medicine',
+  'inventory.batchesTab': 'Batches',
+  'inventory.movementsTab': 'Movement Log',
+  'inventory.receiveStock': 'Receive Stock',
+  'inventory.searchPlaceholder': 'Search by name or barcode...',
+  'inventory.loadFailed': 'Failed to load inventory data',
+  'inventory.emptyStock': 'No medicines in inventory',
+  'inventory.emptyBatches': 'No batches found',
+  'inventory.emptyMovements': 'No stock movements recorded',
+
+  // Inventory — summary cards
+  'inventory.summaryUnits': 'Total Units',
+  'inventory.summaryValue': 'Stock Value',
+  'inventory.summaryBatches': 'Active Batches',
+  'inventory.summaryLow': 'Low Stock',
+  'inventory.summaryOut': 'Out of Stock',
+  'inventory.summaryExpiring': 'Expiring Soon',
+  'inventory.summaryExpired': 'Expired',
+  'inventory.summaryMedicines': 'Active Medicines',
+
+  // Inventory — stock table
+  'inventory.quantity': 'Quantity',
+  'inventory.reorderLevel': 'Reorder Level',
+  'inventory.batchCount': 'Batches',
+  'inventory.nearestExpiry': 'Nearest Expiry',
+  'inventory.stockValue': 'Value',
+  'inventory.viewBatches': 'View Batches',
+
+  // Inventory — stock status
+  'stockStatus.OutOfStock': 'Out',
+  'stockStatus.Low': 'Low',
+  'stockStatus.Ok': 'In Stock',
+  'stockStatus.all': 'All Statuses',
+
+  // Inventory — batch table
+  'batch.batchNo': 'Batch No',
+  'batch.medicine': 'Medicine',
+  'batch.expiryDate': 'Expiry Date',
+  'batch.quantity': 'Quantity',
+  'batch.initialQuantity': 'Received Qty',
+  'batch.purchasePrice': 'Purchase Price',
+  'batch.sellingPrice': 'Selling Price',
+  'batch.supplier': 'Supplier',
+  'batch.receivedDate': 'Received Date',
+  'batch.daysLeft': 'Days Left',
+  'batch.adjust': 'Adjust Quantity',
+  'batch.showDepleted': 'Show depleted batches',
+  'batch.clearFilter': 'Clear filter',
+  'batch.filteredBy': 'Batches for: {name}',
+
+  // Inventory — expiry status
+  'expiryStatus.Expired': 'Expired',
+  'expiryStatus.ExpiringSoon': 'Expiring Soon',
+  'expiryStatus.Valid': 'Valid',
+  'expiryStatus.all': 'All Expiry States',
+  'expiry.daysAgo': '{n} days ago',
+  'expiry.inDays': 'in {n} days',
+
+  // Inventory — movements table
+  'movement.date': 'Date',
+  'movement.type': 'Movement Type',
+  'movement.change': 'Change',
+  'movement.before': 'Before',
+  'movement.after': 'After',
+  'movement.reason': 'Reason',
+  'movement.reference': 'Reference',
+
+  // Movement types
+  'movementType.Receipt': 'Receipt',
+  'movementType.Dispense': 'Dispense',
+  'movementType.Adjustment': 'Stock Adjustment',
+  'movementType.Disposal': 'Disposal',
+  'movementType.ReturnToSupplier': 'Return to Supplier',
+  'movementType.CustomerReturn': 'Customer Return',
+
+  // Receive stock form
+  'receive.title': 'Receive New Batch',
+  'receive.medicine': 'Medicine',
+  'receive.medicinePlaceholder': 'Select a medicine',
+  'receive.submit': 'Record Receipt',
+  'receive.duplicateBatch': 'This batch number already exists for this medicine',
+  'receive.invalid': 'Please check the values you entered',
+  'receive.failed': 'Failed to record the receipt',
+  'receive.expiryHint': 'Expiry date must be in the future',
+
+  // Adjust stock form
+  'adjust.title': 'Adjust Batch Quantity',
+  'adjust.currentQuantity': 'Current Quantity',
+  'adjust.newQuantity': 'New Quantity',
+  'adjust.movementType': 'Movement Type',
+  'adjust.reason': 'Reason',
+  'adjust.reasonPlaceholder': 'e.g. physical count correction',
+  'adjust.reference': 'Reference (optional)',
+  'adjust.submit': 'Save Adjustment',
+  'adjust.maxHint': 'Maximum {n} units',
+  'adjust.invalid': 'Please check the values you entered',
+  'adjust.failed': 'Failed to adjust the quantity',
+  'adjust.delta': 'Difference',
+
+  // Units
+  'unit.jod': 'JOD',
+  'unit.units': 'units',
+  'unit.day': 'day',
 };
 
 export const DICTIONARIES = { ar, en } as const;

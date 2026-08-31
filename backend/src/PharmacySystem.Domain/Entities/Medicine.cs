@@ -14,6 +14,10 @@ public class Medicine
     public bool IsControlled { get; set; }
     public int ControlledLevel { get; set; }
     public bool IsActive { get; set; } = true;
+
+    /// <summary>Stock level at or below which the medicine is flagged for reordering.</summary>
+    public int ReorderLevel { get; set; } = 10;
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     

@@ -13,6 +13,7 @@ public interface IApplicationDbContext
     DbSet<Batch> Batches { get; }
     DbSet<Pharmacy> Pharmacies { get; }
     DbSet<PharmacyBranch> PharmacyBranches { get; }
+    DbSet<StockMovement> StockMovements { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

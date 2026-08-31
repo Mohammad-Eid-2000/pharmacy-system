@@ -13,5 +13,9 @@ public class Batch
     public DateTime ReceivedDate { get; set; } = DateTime.UtcNow;
     public bool IsActive { get; set; } = true;
     
+    /// <summary>Supplier invoice / goods-receipt reference this batch arrived on.</summary>
+    public string? SupplierName { get; set; }
+
     public virtual Medicine Medicine { get; set; } = null!;
+    public virtual ICollection<StockMovement> Movements { get; set; } = new List<StockMovement>();
 }

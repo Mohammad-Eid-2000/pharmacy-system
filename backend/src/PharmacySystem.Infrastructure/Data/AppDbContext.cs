@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PharmacySystem.Application.Common;
 using PharmacySystem.Domain.Entities;
+using PharmacySystem.Domain.Enums;
 
 namespace PharmacySystem.Infrastructure.Data;
 
@@ -12,6 +13,7 @@ public class AppDbContext : DbContext, IApplicationDbContext
     public DbSet<Batch> Batches => Set<Batch>();
     public DbSet<Pharmacy> Pharmacies => Set<Pharmacy>();
     public DbSet<PharmacyBranch> PharmacyBranches => Set<PharmacyBranch>();
+    public DbSet<StockMovement> StockMovements => Set<StockMovement>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,6 +40,30 @@ public class AppDbContext : DbContext, IApplicationDbContext
                   .WithMany(m => m.Batches)
                   .HasForeignKey(e => e.MedicineId);
             entity.HasIndex(e => e.ExpiryDate);
+            // A batch number is unique per medicine, not globally: two different
+            // products may legitimately share a supplier's batch numbering.
+            entity.HasIndex(e => new { e.MedicineId, e.BatchNo }).IsUnique();
+            entity.Property(e => e.SupplierName).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<StockMovement>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            // Stored as text so the audit trail is readable without decoding ints.
+            entity.Property(e => e.MovementType)
+                  .HasConversion<string>()
+                  .HasMaxLength(30)
+                  .IsRequired();
+            entity.Property(e => e.Reason).HasMaxLength(500);
+            entity.Property(e => e.Reference).HasMaxLength(100);
+            entity.Property(e => e.PerformedBy).HasMaxLength(100);
+            entity.HasOne(e => e.Batch)
+                  .WithMany(b => b.Movements)
+                  .HasForeignKey(e => e.BatchId)
+                  // Deleting a batch must not silently erase its audit history.
+                  .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(e => e.BatchId);
+            entity.HasIndex(e => e.CreatedAt);
         });
 
         modelBuilder.Entity<Pharmacy>(entity =>

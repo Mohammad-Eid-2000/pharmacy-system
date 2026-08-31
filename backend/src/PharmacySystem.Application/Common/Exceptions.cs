@@ -14,3 +14,9 @@ public class ConflictException : Exception
 {
     public ConflictException(string message) : base(message) { }
 }
+
+/// <summary>Thrown when request input fails a business rule. Maps to HTTP 400.</summary>
+public class ValidationException : Exception
+{
+    public ValidationException(string message) : base(message) { }
+}

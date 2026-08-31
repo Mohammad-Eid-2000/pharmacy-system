@@ -185,9 +185,12 @@ h3 {
   background: var(--color-bg);
 }
 
-/* Barcodes and strengths are Latin/numeric even in Arabic UI. */
+/* Barcodes, dates, money and strengths are Latin/numeric even in Arabic UI.
+   'isolate' keeps each value a self-contained bidi run, so a Latin value never
+   reorders against the surrounding Arabic text. */
 .numeric {
   direction: ltr;
+  unicode-bidi: isolate;
   text-align: start;
   font-variant-numeric: tabular-nums;
 }
