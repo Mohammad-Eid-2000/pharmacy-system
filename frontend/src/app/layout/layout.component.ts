@@ -19,8 +19,18 @@ import { I18nService, Lang } from '../core/i18n/i18n.service';
           <a routerLink="/inventory" routerLinkActive="active" class="nav-item">
             <span class="nav-icon" aria-hidden="true">📦</span>{{ i18n.t('nav.inventory') }}
           </a>
-          <a routerLink="/pos" routerLinkActive="active" class="nav-item">
+          <!-- The terminal is an exact-match link so it does not stay highlighted
+               while the sales-history child route is open. -->
+          <a
+            routerLink="/pos"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="nav-item"
+          >
             <span class="nav-icon" aria-hidden="true">🛒</span>{{ i18n.t('nav.pos') }}
+          </a>
+          <a routerLink="/pos/sales" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon" aria-hidden="true">🧾</span>{{ i18n.t('nav.sales') }}
           </a>
           <a routerLink="/purchases" routerLinkActive="active" class="nav-item">
             <span class="nav-icon" aria-hidden="true">📋</span>{{ i18n.t('nav.purchases') }}

@@ -191,8 +191,21 @@ h3 {
 .numeric {
   direction: ltr;
   unicode-bidi: isolate;
-  text-align: start;
   font-variant-numeric: tabular-nums;
+}
+
+/*
+ * `direction: ltr` above keeps digit runs and dates internally ordered, but it
+ * also redefines `start` as the left edge. Left unqualified, an Arabic label
+ * would sit against the right edge while its own value sat against the left.
+ * Alignment has to follow the page, so state it physically per direction.
+ */
+[dir='ltr'] .numeric {
+  text-align: left;
+}
+
+[dir='rtl'] .numeric {
+  text-align: right;
 }
 
 /* ---------- Badges ---------- */
@@ -221,4 +234,111 @@ h3 {
   background: var(--color-bg);
   color: var(--color-text-muted);
   border: 1px solid var(--color-border);
+}
+
+/*
+ * Wide tables scroll horizontally instead of forcing the browser to squeeze
+ * columns, which breaks otherwise-unbreakable tokens like batch numbers.
+ */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/*
+ * Summary cards. These live here rather than in a feature component because
+ * Angular scopes component styles, so a second feature reusing the markup would
+ * silently render it unstyled.
+ */
+.summary-grid {
+  display: grid;
+  /* 120px lets several cards share one row on a desktop width instead of
+     orphaning the last card onto a row of its own. */
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.summary-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.summary-label {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+.summary-value {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.summary-card.alert-warning {
+  border-color: var(--color-warning);
+  background: #fdf6e8;
+}
+
+.summary-card.alert-warning .summary-value {
+  color: var(--color-warning);
+}
+
+.summary-card.alert-danger {
+  border-color: var(--color-danger);
+  background: #fdeceb;
+}
+
+.summary-card.alert-danger .summary-value {
+  color: var(--color-danger);
+}
+
+.badge-danger {
+  background: #fdeceb;
+  color: var(--color-danger);
+}
+
+/* Single tokens — invoice numbers, batch codes, dates, amounts — must not break. */
+.nowrap {
+  white-space: nowrap;
+}
+
+/* The action column stays reachable even when a wide table scrolls sideways. */
+.table-wrapper .table th.actions,
+.table-wrapper .table td.actions {
+  position: sticky;
+  inset-inline-end: 0;
+  background: var(--color-surface);
+  /* Separates the pinned column from the cells scrolling beneath it. */
+  box-shadow: -1px 0 0 var(--color-border);
+}
+
+.table-wrapper .table th.actions {
+  background: var(--color-bg);
+}
+
+.table-wrapper .table tbody tr:hover td.actions {
+  background: var(--color-bg);
+}
+
+/* Field-level messages. Errors must read as errors, not as ordinary body text. */
+.form-error {
+  display: block;
+  margin-block-start: var(--space-1);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-danger);
+}
+
+.form-hint {
+  display: block;
+  margin-block-start: var(--space-1);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
 }

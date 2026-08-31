@@ -48,7 +48,8 @@ pharmacy-system/
 │           ├── layout/                     # layout.component
 │           └── features/
 │               ├── medicines/              # ✅ Module كامل (Service + List + Form)
-│               └── inventory/
+│               ├── inventory/              # ✅ Module كامل (دفعات + حركات)
+│               └── pos/                    # ✅ Module كامل (شاشة بيع + فاتورة + سجل)
 ├── .gitignore
 └── README.md
 ```
@@ -145,8 +146,8 @@ export const en: Record<TranslationKey, string> = {
 |---|---|
 | الأدوية (Medicines) | ✅ CRUD كامل — Backend + Frontend |
 | تعريب الواجهة (i18n) | ✅ عربي/إنجليزي + RTL/LTR |
-| المخزون (Inventory) | 🔄 قيد التطوير — Routes جاهزة |
-| نقطة البيع (POS) | ⏳ مخطّط |
+| المخزون (Inventory) | ✅ كامل — دفعات + حركات مخزنية + تنبيهات صلاحية |
+| نقطة البيع (POS) | ✅ كامل — صرف FEFO + فاتورة + إرجاع |
 | المشتريات والموردين | ⏳ مخطّط |
 | التأمين | ⏳ مخطّط |
 | التقارير | ⏳ مخطّط |

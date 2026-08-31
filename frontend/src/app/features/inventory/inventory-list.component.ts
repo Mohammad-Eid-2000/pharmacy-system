@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { FormatService } from '../../core/format/format.service';
 import { TranslationKey } from '../../core/i18n/translations';
 import {
   Batch,
@@ -31,7 +32,7 @@ type Tab = 'stock' | 'batches' | 'movements';
       </div>
       <div class="summary-card">
         <span class="summary-label">{{ i18n.t('inventory.summaryValue') }}</span>
-        <span class="summary-value numeric">{{ money(summary().totalStockValue) }}</span>
+        <span class="summary-value numeric">{{ fmt.money(summary().totalStockValue) }}</span>
       </div>
       <div class="summary-card">
         <span class="summary-label">{{ i18n.t('inventory.summaryBatches') }}</span>
@@ -149,7 +150,7 @@ type Tab = 'stock' | 'batches' | 'movements';
                   <td class="numeric">{{ item.batchCount }}</td>
                   <td class="numeric expiry-cell">
                     @if (item.nearestExpiryDate) {
-                      <span>{{ date(item.nearestExpiryDate) }}</span>
+                      <span>{{ fmt.date(item.nearestExpiryDate) }}</span>
                       @if (item.expiredBatchCount > 0) {
                         <span class="badge badge-danger">{{ i18n.t('expiryStatus.Expired') }}</span>
                       } @else if (item.expiringSoonBatchCount > 0) {
@@ -159,7 +160,7 @@ type Tab = 'stock' | 'batches' | 'movements';
                       —
                     }
                   </td>
-                  <td class="numeric">{{ money(item.stockValue) }}</td>
+                  <td class="numeric">{{ fmt.money(item.stockValue) }}</td>
                   <td>
                     <span class="badge" [class]="stockBadgeClass(item.stockStatus)">
                       {{ i18n.t(stockStatusKey(item.stockStatus)) }}
@@ -221,7 +222,7 @@ type Tab = 'stock' | 'batches' | 'movements';
                   <td class="numeric strong">{{ batch.batchNo }}</td>
                   <td>{{ i18n.localized(batch.medicineNameAr, batch.medicineNameEn) }}</td>
                   <td class="numeric expiry-cell">
-                    <span>{{ date(batch.expiryDate) }}</span>
+                    <span>{{ fmt.date(batch.expiryDate) }}</span>
                     <span class="badge" [class]="expiryBadgeClass(batch.expiryStatus)">
                       {{ i18n.t(expiryStatusKey(batch.expiryStatus)) }}
                     </span>
@@ -231,8 +232,8 @@ type Tab = 'stock' | 'batches' | 'movements';
                     {{ batch.quantity }}
                     <span class="muted">/ {{ batch.initialQuantity }}</span>
                   </td>
-                  <td class="numeric">{{ money(batch.purchasePrice) }}</td>
-                  <td class="numeric">{{ money(batch.sellingPrice) }}</td>
+                  <td class="numeric">{{ fmt.money(batch.purchasePrice) }}</td>
+                  <td class="numeric">{{ fmt.money(batch.sellingPrice) }}</td>
                   <td>{{ batch.supplierName || '—' }}</td>
                   <td class="actions nowrap">
                     <button class="btn btn-link" (click)="openAdjust(batch)">{{ i18n.t('batch.adjust') }}</button>
@@ -285,14 +286,14 @@ type Tab = 'stock' | 'batches' | 'movements';
             <tbody>
               @for (move of movements().items; track move.id) {
                 <tr>
-                  <td class="numeric">{{ dateTime(move.createdAt) }}</td>
+                  <td class="numeric">{{ fmt.dateTime(move.createdAt) }}</td>
                   <td>{{ i18n.localized(move.medicineNameAr, move.medicineNameEn) }}</td>
                   <td class="numeric">{{ move.batchNo }}</td>
                   <td>
                     <span class="badge badge-muted">{{ i18n.t(movementTypeKey(move.movementType)) }}</span>
                   </td>
                   <td class="numeric strong" [class.positive]="move.quantityChange > 0" [class.negative]="move.quantityChange < 0">
-                    {{ signed(move.quantityChange) }}
+                    {{ fmt.signed(move.quantityChange) }}
                   </td>
                   <td class="numeric muted">{{ move.quantityBefore }}</td>
                   <td class="numeric">{{ move.quantityAfter }}</td>
@@ -347,49 +348,7 @@ type Tab = 'stock' | 'batches' | 'movements';
         font-size: 1.5rem;
         color: var(--color-primary);
       }
-
-      .summary-grid {
-        display: grid;
-        /* 120px lets all seven cards share one row on a desktop width instead of
-           orphaning the last card onto a row of its own. */
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: var(--space-3);
-        margin-bottom: var(--space-6);
-      }
-      .summary-card {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        padding: var(--space-4);
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-1);
-      }
-      .summary-label {
-        font-size: 0.8125rem;
-        color: var(--color-text-muted);
-        line-height: 1.35;
-      }
-      .summary-value {
-        font-size: 1.375rem;
-        font-weight: 700;
-        color: var(--color-text);
-      }
       /* Border-and-tint only: keeps text on a light background so contrast holds. */
-      .summary-card.alert-warning {
-        border-color: var(--color-warning);
-        background: #fdf6e8;
-      }
-      .summary-card.alert-warning .summary-value {
-        color: var(--color-warning);
-      }
-      .summary-card.alert-danger {
-        border-color: var(--color-danger);
-        background: #fdeceb;
-      }
-      .summary-card.alert-danger .summary-value {
-        color: var(--color-danger);
-      }
 
       .tabs {
         display: flex;
@@ -469,24 +428,6 @@ type Tab = 'stock' | 'batches' | 'movements';
         white-space: normal;
       }
       .table-wrapper .table .numeric,
-      .table-wrapper .table .nowrap {
-        white-space: nowrap;
-      }
-      /* The action column must stay reachable even when the table scrolls. */
-      .table-wrapper .table th.actions,
-      .table-wrapper .table td.actions {
-        position: sticky;
-        inset-inline-end: 0;
-        background: var(--color-surface);
-        /* Separates the pinned column from the cells scrolling beneath it. */
-        box-shadow: -1px 0 0 var(--color-border);
-      }
-      .table-wrapper .table th.actions {
-        background: var(--color-bg);
-      }
-      .table-wrapper .table tbody tr:hover td.actions {
-        background: var(--color-bg);
-      }
       .table-wrapper .table tbody tr.row-expired td.actions {
         background: #fdeeec;
       }
@@ -521,10 +462,6 @@ type Tab = 'stock' | 'batches' | 'movements';
       /* Badges sit next to text, so give them breathing room on the leading edge. */
       .badge {
         margin-inline-start: var(--space-2);
-      }
-      .badge-danger {
-        background: #fdeceb;
-        color: var(--color-danger);
       }
 
       .state-message {
@@ -564,6 +501,7 @@ type Tab = 'stock' | 'batches' | 'movements';
 })
 export class InventoryListComponent implements OnInit {
   protected readonly i18n = inject(I18nService);
+  protected readonly fmt = inject(FormatService);
   protected readonly service = inject(InventoryService);
 
   protected readonly stock = this.service.stock;
@@ -585,33 +523,6 @@ export class InventoryListComponent implements OnInit {
   protected readonly receiveOpen = signal(false);
   protected readonly adjusting = signal<Batch | null>(null);
 
-  /**
-   * Arabic uses `-u-nu-latn` so numerals stay Latin. Quantities, barcodes and
-   * prices elsewhere in the app are plain interpolations and therefore Latin;
-   * letting Intl switch to Arabic-Indic digits here would put two different
-   * digit systems side by side in the same table row.
-   */
-  private readonly numberLocale = computed(() => (this.i18n.lang() === 'ar' ? 'ar-JO-u-nu-latn' : 'en-JO'));
-  private readonly dateLocale = computed(() => (this.i18n.lang() === 'ar' ? 'ar-JO-u-nu-latn' : 'en-GB'));
-
-  /** Formats money with the 3 decimals the Jordanian dinar uses. */
-  private readonly moneyFormat = computed(
-    () =>
-      new Intl.NumberFormat(this.numberLocale(), {
-        minimumFractionDigits: 3,
-        maximumFractionDigits: 3,
-      }),
-  );
-  private readonly dateFormat = computed(
-    () => new Intl.DateTimeFormat(this.dateLocale(), { dateStyle: 'medium' }),
-  );
-  private readonly dateTimeFormat = computed(
-    () =>
-      new Intl.DateTimeFormat(this.dateLocale(), {
-        dateStyle: 'short',
-        timeStyle: 'short',
-      }),
-  );
 
   private searchDebounce?: ReturnType<typeof setTimeout>;
 
@@ -763,29 +674,6 @@ export class InventoryListComponent implements OnInit {
     }
   }
 
-  protected money(value: number): string {
-    // Non-breaking space keeps the amount and the currency on one line.
-    return `${this.moneyFormat().format(value)}\u00A0${this.i18n.t('unit.jod')}`;
-  }
-
-  /**
-   * Arabic date patterns embed U+200F (RLM) between the segments. Inside a cell
-   * that is isolated to LTR for its numerals, those marks reorder the parts and
-   * render 22/04/2028 as "222028/04/". Stripping the bidi controls leaves the
-   * segment order the format already specifies.
-   */
-  private stripBidi(text: string): string {
-    return text.replace(/[\u200E\u200F\u061C]/g, '');
-  }
-
-  protected date(iso: string): string {
-    return this.stripBidi(this.dateFormat().format(new Date(iso)));
-  }
-
-  protected dateTime(iso: string): string {
-    return this.stripBidi(this.dateTimeFormat().format(new Date(iso)));
-  }
-
   /** Expired batches report negative days, so phrase them as "N days ago". */
   protected daysLabel(days: number): string {
     return days < 0
@@ -793,8 +681,4 @@ export class InventoryListComponent implements OnInit {
       : this.i18n.t('expiry.inDays', { n: days });
   }
 
-  /** Keeps the sign visible on stock deltas, including in Arabic numerals. */
-  protected signed(value: number): string {
-    return value > 0 ? `+${value}` : String(value);
-  }
 }
