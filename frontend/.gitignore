@@ -1,0 +1,39 @@
+# Dependency directories
+node_modules/
+
+# Build outputs
+dist/
+tmp/
+out-tsc/
+bazel-out/
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+connect.lock
+sys_apps_shared_srv/
+
+# System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# User-requested ignore
+package-lock.json

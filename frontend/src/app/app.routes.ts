@@ -14,5 +14,13 @@ export const routes: Routes = [
     path: 'pos',
     loadChildren: () => import('./features/pos/pos.routes').then(m => m.POS_ROUTES),
   },
+  {
+    path: 'purchases',
+    loadChildren: () => import('./features/purchases/purchases.routes').then(m => m.PURCHASES_ROUTES),
+  },
+  {
+    path: 'reports',
+    loadChildren: () => import('./features/reports/reports.routes').then(m => m.REPORTS_ROUTES),
+  },
   { path: '**', redirectTo: 'medicines' },
 ];

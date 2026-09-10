@@ -16,6 +16,9 @@ public interface IApplicationDbContext
     DbSet<StockMovement> StockMovements { get; }
     DbSet<Sale> Sales { get; }
     DbSet<SaleItem> SaleItems { get; }
+    DbSet<Supplier> Suppliers { get; }
+    DbSet<PurchaseOrder> PurchaseOrders { get; }
+    DbSet<PurchaseOrderItem> PurchaseOrderItems { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

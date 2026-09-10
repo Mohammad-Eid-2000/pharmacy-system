@@ -16,6 +16,9 @@ public class AppDbContext : DbContext, IApplicationDbContext
     public DbSet<StockMovement> StockMovements => Set<StockMovement>();
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<SaleItem> SaleItems => Set<SaleItem>();
+    public DbSet<Supplier> Suppliers => Set<Supplier>();
+    public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
+    public DbSet<PurchaseOrderItem> PurchaseOrderItems => Set<PurchaseOrderItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -147,6 +150,77 @@ public class AppDbContext : DbContext, IApplicationDbContext
             entity.HasOne(e => e.Pharmacy)
                   .WithMany(p => p.Branches)
                   .HasForeignKey(e => e.PharmacyId);
+        });
+
+        modelBuilder.Entity<Supplier>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.NameAr).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.NameEn).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.TaxId).HasMaxLength(50);
+            entity.Property(e => e.Phone).HasMaxLength(50);
+            entity.Property(e => e.Mobile).HasMaxLength(50);
+            entity.Property(e => e.Email).HasMaxLength(200);
+            entity.Property(e => e.Address).HasMaxLength(300);
+            entity.Property(e => e.City).HasMaxLength(100);
+            entity.Property(e => e.Notes).HasMaxLength(500);
+            // Staff pick suppliers by Arabic name in the buying screens, so it
+            // must be unambiguous; the tax number is the legal identifier.
+            entity.HasIndex(e => e.NameAr).IsUnique();
+            entity.HasIndex(e => e.TaxId).IsUnique();
+            entity.HasIndex(e => e.IsActive);
+        });
+
+        modelBuilder.Entity<PurchaseOrder>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.OrderNo).IsRequired().HasMaxLength(30);
+            // The buying screen derives the next number from stored numbers; this
+            // unique index is the backstop that stops two orders taking the same one.
+            entity.HasIndex(e => e.OrderNo).IsUnique();
+            entity.Property(e => e.Status)
+                  .HasConversion<string>()
+                  .HasMaxLength(20)
+                  .IsRequired();
+            entity.Property(e => e.Subtotal).HasPrecision(18, 3);
+            entity.Property(e => e.TaxAmount).HasPrecision(18, 3);
+            entity.Property(e => e.DiscountAmount).HasPrecision(18, 3);
+            entity.Property(e => e.TotalAmount).HasPrecision(18, 3);
+            entity.Property(e => e.Notes).HasMaxLength(500);
+            entity.Property(e => e.CreatedBy).HasMaxLength(100);
+            entity.Property(e => e.CancelReason).HasMaxLength(500);
+            entity.HasOne(e => e.Supplier)
+                  .WithMany(s => s.PurchaseOrders)
+                  .HasForeignKey(e => e.SupplierId)
+                  // A supplier must not be removed while an order still refers to it.
+                  .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(e => e.SupplierId);
+            entity.HasIndex(e => e.OrderDate);
+            entity.HasIndex(e => e.Status);
+        });
+
+        modelBuilder.Entity<PurchaseOrderItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.MedicineNameAr).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.MedicineNameEn).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Barcode).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.UnitPrice).HasPrecision(18, 3);
+            entity.Property(e => e.LineSubtotal).HasPrecision(18, 3);
+            entity.Property(e => e.LineTax).HasPrecision(18, 3);
+            entity.Property(e => e.LineTotal).HasPrecision(18, 3);
+            // Lines belong to the order and are meaningless without it.
+            entity.HasOne(e => e.PurchaseOrder)
+                  .WithMany(o => o.Items)
+                  .HasForeignKey(e => e.PurchaseOrderId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            // Medicines must not be removable while an order still refers to them.
+            entity.HasOne(e => e.Medicine)
+                  .WithMany()
+                  .HasForeignKey(e => e.MedicineId)
+                  .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(e => e.PurchaseOrderId);
+            entity.HasIndex(e => e.MedicineId);
         });
     }
 }
